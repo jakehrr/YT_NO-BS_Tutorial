@@ -3663,10 +3663,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26639432d17c03c419e6b8b74eb120c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cam: {fileID: 0}
+  cam: {fileID: 5918836426502801090}
   layerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 72
 --- !u!1 &7381810830573146433
 GameObject:
   m_ObjectHideFlags: 0
@@ -4886,7 +4886,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 87dcc79c3dec9214c810a33cd3b6bf4d, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.4
   m_Pitch: 1
   Loop: 0
   Mute: 0

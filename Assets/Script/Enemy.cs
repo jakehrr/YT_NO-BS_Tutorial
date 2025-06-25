@@ -32,6 +32,7 @@ public class Enemy : MonoBehaviour
 
     private void Start()
     {
+        player = GameObject.Find("Player");
         StartCoroutine(ActivationDelay());
     }
 
@@ -108,6 +109,7 @@ public class Enemy : MonoBehaviour
     {
         if (isDead) return;
 
+        GetComponent<CapsuleCollider>().enabled = false;
         isDead = true;
         agent.isStopped = true;
         zombieAnim.SetBool("IsAlive", false);
