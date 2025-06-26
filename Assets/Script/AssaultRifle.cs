@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class AssaultRifle : MonoBehaviour
@@ -17,6 +18,7 @@ public class AssaultRifle : MonoBehaviour
     [SerializeField] private float reloadTime = 1.5f;
     [SerializeField] private int magazineSize = 30;
     [SerializeField] private LayerMask hitLayer;
+    [SerializeField] private TextMeshProUGUI ammoUI;
 
     [SerializeField] private int currentAmmo;
     private bool isReloading = false;
@@ -32,7 +34,13 @@ public class AssaultRifle : MonoBehaviour
 
     private void Update()
     {
-        if (isReloading) return; 
+        if (isReloading) return;
+
+        if (Input.GetKeyDown(KeyCode.R) && currentAmmo < magazineSize)
+        {
+            StartCoroutine(Reload());
+            return;
+        }
 
         if(currentAmmo <= 0)
         {
@@ -45,6 +53,8 @@ public class AssaultRifle : MonoBehaviour
             nextTimeToShoot = Time.time + timeBetweenShots;
             Shoot();
         }
+
+        ammoUI.text = currentAmmo.ToString() + " / " + magazineSize.ToString();
     }
 
     private void Shoot()
