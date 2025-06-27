@@ -26,12 +26,14 @@ public class Enemy : MonoBehaviour
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private Transform zombieVisuals;
 
+    private GameManager manager;
     private bool isActive = false;
     private bool isDead = false;
     private bool isAttacking = false;
 
     private void Start()
     {
+        manager = GameObject.Find("Game Manager").GetComponent<GameManager>();
         player = GameObject.Find("Player");
         StartCoroutine(ActivationDelay());
     }
@@ -109,6 +111,7 @@ public class Enemy : MonoBehaviour
     {
         if (isDead) return;
 
+        manager.currentZombiesAlive--;
         GetComponent<CapsuleCollider>().enabled = false;
         isDead = true;
         agent.isStopped = true;

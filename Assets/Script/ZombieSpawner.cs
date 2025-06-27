@@ -11,8 +11,12 @@ public class ZombieSpawner : MonoBehaviour
     [SerializeField] private float minSpawnTime;
     [SerializeField] private float maxSpawnTime;
 
+    private GameManager manager;
+
     private void Start()
     {
+        manager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+
         randomInitialSpawn = Random.Range(minSpawnTime, maxSpawnTime);
 
         StartCoroutine(BeginZombieSpawn(randomInitialSpawn));
@@ -20,12 +24,16 @@ public class ZombieSpawner : MonoBehaviour
 
     private IEnumerator BeginZombieSpawn(float spawnTime)
     {
-        spawnTime = Random.Range(minSpawnTime, maxSpawnTime);
-
         yield return new WaitForSeconds(spawnTime);
 
-        Instantiate(zombie, this.transform.position, this.transform.rotation);
+        if(manager.currentZombieCount >= manager.maxZombieCount) { yield break; }
 
-        StartCoroutine(BeginZombieSpawn(spawnTime));
+        Instantiate(zombie, transform.position, transform.rotation);
+
+        manager.currentZombieCount++;
+        manager.currentZombiesAlive++;
+
+        float nextSpawnTime = Random.Range(minSpawnTime, maxSpawnTime);
+        StartCoroutine(BeginZombieSpawn(nextSpawnTime));
     }
 }
