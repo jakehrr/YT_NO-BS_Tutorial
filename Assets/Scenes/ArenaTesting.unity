@@ -9768,7 +9768,7 @@ GameObject:
   - component: {fileID: 572289136}
   - component: {fileID: 572289137}
   m_Layer: 0
-  m_Name: Door Transform Right
+  m_Name: R1 Door Transform Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20123,7 +20123,7 @@ GameObject:
   - component: {fileID: 1022817472}
   - component: {fileID: 1022817473}
   m_Layer: 0
-  m_Name: 'Door Transform Bottom '
+  m_Name: 'R1 Door Transform Bottom '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21232,6 +21232,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1243508369}
   - {fileID: 1189517106}
   - {fileID: 1153234293}
   - {fileID: 1757286109}
@@ -23806,7 +23807,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1243508369}
   m_Layer: 0
-  m_Name: Door Transform
+  m_Name: R1 Door Transform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -23820,8 +23821,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1243508368}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 14.37, y: 0.78, z: 2.8}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 19.369999, y: -1.2490001, z: -2.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -23829,7 +23830,7 @@ Transform:
   - {fileID: 1022817471}
   - {fileID: 2081209550}
   - {fileID: 572289135}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1090590631}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1251693429
 PrefabInstance:
@@ -32696,7 +32697,7 @@ GameObject:
   - component: {fileID: 1726960939}
   - component: {fileID: 1726960940}
   m_Layer: 0
-  m_Name: Door Transform Top
+  m_Name: R1 Door Transform Top
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -38860,7 +38861,7 @@ GameObject:
   - component: {fileID: 2081209551}
   - component: {fileID: 2081209552}
   m_Layer: 0
-  m_Name: Door Transform Left
+  m_Name: R1 Door Transform Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -40171,4 +40172,3 @@ SceneRoots:
   - {fileID: 374218155}
   - {fileID: 1370212363}
   - {fileID: 1508931124}
-  - {fileID: 1243508369}
