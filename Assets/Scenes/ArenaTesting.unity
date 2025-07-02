@@ -21059,7 +21059,7 @@ MonoBehaviour:
   fadeAnimation: {fileID: 690061707}
   roomIndex: 0
   currentZombieCount: 0
-  maxZombieCount: 1
+  maxZombieCount: 10
   currentZombiesAlive: 0
   indicatorArrows: {fileID: 227604911}
   rooms:
