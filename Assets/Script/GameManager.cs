@@ -10,28 +10,37 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Animator fadeAnimation;
 
     [Header("Current Wave Stats")]
-    public int wave;
+    public int roomIndex;
     public int currentZombieCount = 0;
     public int maxZombieCount = 15;
     public int currentZombiesAlive = 0;
 
     [Header("Room Elements")]
     [SerializeField] private GameObject indicatorArrows;
-    [SerializeField] private GameObject[] doorBoxes;
-    [SerializeField] private GameObject[] rooms;
-    [SerializeField] private Transform[] playerSpawnPoints;
+    public List<RoomData> rooms;
+    [SerializeField] private GameObject UI;
 
     private void Update()
     {
-        if(currentZombieCount >= maxZombieCount && currentZombiesAlive == 0) roomComplete = true;
+        if (currentZombieCount >= maxZombieCount && currentZombiesAlive == 0)
+        {
+            roomComplete = true;
+        }
 
         if (roomComplete)
         {
             indicatorArrows.SetActive(true);
-            foreach(GameObject go in doorBoxes)
-            {
-                go.GetComponent<BoxCollider>().enabled = true;
-            }
+            foreach (var door in rooms[roomIndex].doorBoxes)
+                door.GetComponent<BoxCollider>().enabled = true;
+
+            UI.GetComponent<DoorArrowVisualisation>().PopulateDoorReference();
+        }
+        else if (!roomComplete)
+        {
+            foreach (var door in rooms[roomIndex].doorBoxes)
+                door.GetComponent<BoxCollider>().enabled = false;
+
+            UI.GetComponent<DoorArrowVisualisation>().ClearDoorReferences();
         }
     }
 
@@ -48,7 +57,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator BeginRoomTransition()
     {
-        roomComplete = false;
+        ResetZombieSpawning();
 
         // Wait for the fade out
         yield return new WaitForSeconds(1.5f);
@@ -56,16 +65,19 @@ public class GameManager : MonoBehaviour
         // Deactivate Arrow Indicators
         indicatorArrows.SetActive(false);
 
-        // Increase what wave we're on
-        wave += 1;
+        // When room index reaches the max number of rooms, loop back to the first room. 
+        roomIndex = (roomIndex + 1) % rooms.Count;
 
-        // Change what rooms active
-        foreach (GameObject go in rooms) go.SetActive(false);
-        rooms[wave].gameObject.SetActive(true);
+        // Deactivate all rooms
+        foreach(var room in rooms)
+            room.roomRoot.SetActive(false);
 
-        // Move player to next position
+        // Activate current room
+        var nextRoom = rooms[roomIndex];
+        nextRoom.roomRoot.SetActive(true);
+
         GameObject player = GameObject.Find("Player");
-        player.transform.position = playerSpawnPoints[wave].position;
+        player.transform.position = nextRoom.playerSpawnPoint.position;
 
         // Give 1 second for all the logic to finish firing for a smooth transition
         yield return new WaitForSeconds(1f); 
@@ -80,4 +92,12 @@ public class GameManager : MonoBehaviour
         // Fade back into the scene
         fadeAnimation.SetBool("FadeOut", true);
     }
+}
+
+[System.Serializable]
+public class RoomData
+{
+    public GameObject roomRoot;
+    public Transform playerSpawnPoint;
+    public GameObject[] doorBoxes;
 }

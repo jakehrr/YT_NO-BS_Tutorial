@@ -15,14 +15,14 @@ public class RoomTransition : MonoBehaviour
     {
         if(other.gameObject.name == "Player")
         {
+            // Set room complete to false after the process has already begun. 
+            manager.roomComplete = false;
+
             // Fade out the scene to begin transition
             manager.FadeOutScene();
 
             // Load the next room
             manager.BeginNextRoom();
-
-            // Player has entered a doorway
-            manager.ResetZombieSpawning();
         }
     }
 }

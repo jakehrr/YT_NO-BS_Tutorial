@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.ShaderGraph.Internal;
@@ -7,10 +8,18 @@ public class DoorArrowVisualisation : MonoBehaviour
 {
     [SerializeField] private Camera mainCamera;
     [SerializeField] private RectTransform[] arrows;
-    [SerializeField] private Transform[] doors;
+    public Transform[] doors;
     [SerializeField] private Transform player;
 
     [SerializeField] private float radiusFromPlayer = 100f;
+
+    private bool hasPopulated;
+    private GameManager manager;
+
+    private void Start()
+    {
+        manager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+    }
 
     private void Update()
     {
@@ -28,6 +37,47 @@ public class DoorArrowVisualisation : MonoBehaviour
 
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             arrows[i].rotation = Quaternion.Euler(0, 0, angle + -90);
+        }
+    }
+
+    private void UpdateArrowsVisibility()
+    {
+        int numDoors = doors != null ? doors.Length : 0;
+
+        for (int i = 0; i < arrows.Length; i++)
+        {
+            if (i < numDoors)
+                arrows[i].gameObject.SetActive(true);
+            else
+                arrows[i].gameObject.SetActive(false);
+        }
+    }
+
+    public void ClearDoorReferences()
+    {
+        if (doors == null) return;
+
+        Array.Clear(doors, 0, doors.Length);
+        Array.Resize(ref doors, 0);
+        hasPopulated = false;
+    }
+
+    public void PopulateDoorReference()
+    {
+        if (!hasPopulated)
+        {
+            GameObject[] doorBoxes = manager.rooms[manager.roomIndex].doorBoxes;
+
+            doors = new Transform[doorBoxes.Length];
+
+            for (int i = 0; i < doorBoxes.Length; i++)
+            {
+                doors[i] = doorBoxes[i].transform;
+            }
+
+            hasPopulated = true;
+
+            UpdateArrowsVisibility();
         }
     }
 }

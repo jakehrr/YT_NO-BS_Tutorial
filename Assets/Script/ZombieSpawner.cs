@@ -13,7 +13,7 @@ public class ZombieSpawner : MonoBehaviour
 
     private GameManager manager;
 
-    private void Start()
+    private void OnEnable()
     {
         manager = GameObject.Find("Game Manager").GetComponent<GameManager>();
 
