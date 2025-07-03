@@ -4,19 +4,29 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("Player Stats")]
+    [SerializeField] private float rotationSpeed = 15f;
+    [SerializeField] private float moveSpeed = 3f;
+    [SerializeField] private float regenTime = 2.5f;
+    [SerializeField] private int maxHealth = 5; 
+    [SerializeField] private int health = 5; 
+
+    [Header("References")]
     [SerializeField] private Camera mainCamera;
     [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private float rotationSpeed = 15f;
-    [SerializeField] private float moveSpeed = 3f; 
     [SerializeField] private GameObject playerVisuals;
     [SerializeField] private Animator playerAnimation;
+    [SerializeField] private GameObject gameOverUI;
 
+    [Header("Private References")]
     private Rigidbody rb;
     private Vector3 currentInput;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+
+        StartCoroutine(RegenHealthOverTime());
     }
 
     private void Update()
@@ -30,7 +40,7 @@ public class PlayerController : MonoBehaviour
         PlayerMovement();
     }
 
-    // Rotate the player
+    // Rotate the player.
     private void RotatePlayer()
     {
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
@@ -48,6 +58,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Move the player.
     private void PlayerMovement()
     {
         Vector3 moveDirection = (playerVisuals.transform.forward * currentInput.z + playerVisuals.transform.right * currentInput.x).normalized;
@@ -59,6 +70,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Get input from the player.
     private void StoreInput()
     {
         float horizontal = Input.GetAxisRaw("Horizontal");
@@ -67,5 +79,39 @@ public class PlayerController : MonoBehaviour
 
         playerAnimation.SetFloat("HorizontalInput", horizontal);
         playerAnimation.SetFloat("VerticalInput", vertical);
+    }
+
+    // Player takes damage.
+    public void PlayerTakeDamage()
+    {
+        health--;
+
+        if (health <= 0)
+        {
+            // Turn on game over screen
+            gameOverUI.SetActive(true);
+
+            // Play Death Animation.
+            playerAnimation.SetBool("PlayerDead", true);
+
+            // Disable all player animations.
+            GetComponent<PlayerController>().enabled = false;
+            GetComponent<CapsuleCollider>().enabled = false;
+            GetComponentInChildren<AssaultRifle>().enabled = false;
+            Destroy(GetComponent<Rigidbody>());
+        }
+    }
+
+    // Heal player over time.
+    private IEnumerator RegenHealthOverTime()
+    {
+        yield return new WaitForSeconds(regenTime);
+
+        if (health >= maxHealth)
+            health = maxHealth;
+        else
+            health++;
+
+        StartCoroutine(RegenHealthOverTime());  
     }
 }
