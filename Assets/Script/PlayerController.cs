@@ -9,7 +9,16 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float moveSpeed = 3f;
     [SerializeField] private float regenTime = 2.5f;
     [SerializeField] private int maxHealth = 5; 
-    [SerializeField] private int health = 5; 
+    [SerializeField] private int health = 5;
+
+    [Header("Sprint Stats")]
+    [SerializeField] private float sprintSpeed = 6f;
+    [SerializeField] private float stamina = 100f;
+    [SerializeField] private float maxStamina = 100f;
+    [SerializeField] private float staminaDrainRate = 25f;  
+    [SerializeField] private float staminaRegenRate = 15f;
+    [SerializeField] private float regenCooldownTimer = 0f;
+    [SerializeField] private float staminaRegenDelay = 1f; 
 
     [Header("References")]
     [SerializeField] private Camera mainCamera;
@@ -17,10 +26,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject playerVisuals;
     [SerializeField] private Animator playerAnimation;
     [SerializeField] private GameObject gameOverUI;
+    [SerializeField] private AudioSource playerSounds;
+    [SerializeField] private AudioClip deathSFX;
+    [SerializeField] private ParticleSystem bloodVFX;
 
     [Header("Private References")]
     private Rigidbody rb;
     private Vector3 currentInput;
+    private bool isSprinting = false;
 
     private void Start()
     {
@@ -33,6 +46,7 @@ public class PlayerController : MonoBehaviour
     {
         RotatePlayer();
         StoreInput();
+        HandleSprint();
     }
 
     private void FixedUpdate()
@@ -62,11 +76,40 @@ public class PlayerController : MonoBehaviour
     private void PlayerMovement()
     {
         Vector3 moveDirection = (playerVisuals.transform.forward * currentInput.z + playerVisuals.transform.right * currentInput.x).normalized;
-        rb.velocity = moveDirection * moveSpeed;
 
-        if(currentInput == Vector3.zero)
+        float currentSpeed = isSprinting ? sprintSpeed : moveSpeed;
+        rb.velocity = moveDirection * currentSpeed;
+
+        if (currentInput == Vector3.zero)
         {
             rb.velocity = Vector3.zero;
+        }
+    }
+
+    // Player Sprint. 
+    private void HandleSprint()
+    {
+        if (Input.GetKey(KeyCode.LeftShift) && stamina > 0f)
+        {
+            isSprinting = true;
+            stamina -= staminaDrainRate * Time.deltaTime;
+            if (stamina < 0f) stamina = 0f;
+
+            regenCooldownTimer = staminaRegenDelay;
+        }
+        else
+        {
+            isSprinting = false;
+
+            if (regenCooldownTimer > 0f)
+            {
+                regenCooldownTimer -= Time.deltaTime;
+            }
+            else
+            {
+                stamina += staminaRegenRate * Time.deltaTime;
+                if (stamina > maxStamina) stamina = maxStamina;
+            }
         }
     }
 
@@ -86,9 +129,15 @@ public class PlayerController : MonoBehaviour
     {
         health--;
 
+        // Play Blood Particle VFX.
+        bloodVFX.Play();
+
         if (health <= 0)
         {
-            // Turn on game over screen
+            // Play death sound on player death. 
+            playerSounds.PlayOneShot(deathSFX);
+
+            // Turn on game over screen.
             gameOverUI.SetActive(true);
 
             // Play Death Animation.
