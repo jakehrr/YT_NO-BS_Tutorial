@@ -4618,6 +4618,13 @@ MonoBehaviour:
   regenTime: 5
   maxHealth: 5
   health: 5
+  sprintSpeed: 6
+  stamina: 100
+  maxStamina: 100
+  staminaDrainRate: 25
+  staminaRegenRate: 15
+  regenCooldownTimer: 0
+  staminaRegenDelay: 1
   mainCamera: {fileID: 5918836426502801090}
   groundLayer:
     serializedVersion: 2
@@ -5021,7 +5028,8 @@ AudioSource:
   m_GameObject: {fileID: 11970594716214759}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 24300002, guid: 5fadf37b618b0604fb39c76fe941dd36,
+    type: 2}
   m_audioClip: {fileID: 8300000, guid: 87dcc79c3dec9214c810a33cd3b6bf4d, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1

@@ -27,6 +27,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private Transform zombieVisuals;
 
     private GameManager manager;
+    private PlayerStatTracking playerStats;
     private bool isActive = false;
     private bool isDead = false;
     private bool isAttacking = false;
@@ -35,6 +36,7 @@ public class Enemy : MonoBehaviour
     {
         manager = GameObject.Find("Game Manager").GetComponent<GameManager>();
         player = GameObject.Find("Player");
+        playerStats = GameObject.Find("Player Stat Track").GetComponent<PlayerStatTracking>();
         StartCoroutine(ActivationDelay());
     }
 
@@ -111,6 +113,8 @@ public class Enemy : MonoBehaviour
     {
         if (isDead) return;
 
+        playerStats.IncrementAllTimeZombiesKilled(playerStats.allTimeKillsString);
+        playerStats.IncrementCurrentZombiesKilled();
         manager.currentZombiesAlive--;
         GetComponent<CapsuleCollider>().enabled = false;
         isDead = true;

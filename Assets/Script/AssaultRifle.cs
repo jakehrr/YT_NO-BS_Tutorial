@@ -25,15 +25,21 @@ public class AssaultRifle : MonoBehaviour
     private float nextTimeToShoot = 0f;
 
     [SerializeField] private GameObject bulletTrailPrefab;
-    [SerializeField] private float bulletSpeed = 100f; 
+    [SerializeField] private float bulletSpeed = 100f;
+
+    private PauseMenu pauseMenuAccess;
 
     private void Start()
     {
+        pauseMenuAccess = GameObject.Find("PauseMenu").GetComponent<PauseMenu>();
+
         currentAmmo = magazineSize;
     }
 
     private void Update()
     {
+        if (pauseMenuAccess.isPaused) return;
+
         if (isReloading) return;
 
         if (Input.GetKeyDown(KeyCode.R) && currentAmmo < magazineSize)

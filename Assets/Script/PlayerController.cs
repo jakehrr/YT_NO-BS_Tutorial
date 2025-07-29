@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -29,21 +30,28 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AudioSource playerSounds;
     [SerializeField] private AudioClip deathSFX;
     [SerializeField] private ParticleSystem bloodVFX;
+    [SerializeField] private TextMeshProUGUI zombiesKilledText;
 
     [Header("Private References")]
     private Rigidbody rb;
     private Vector3 currentInput;
     private bool isSprinting = false;
+    private PauseMenu pauseMenuAccess;
+    private PlayerStatTracking playerStats;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        pauseMenuAccess = GameObject.Find("PauseMenu").GetComponent<PauseMenu>();
+        playerStats = GameObject.Find("Player Stat Track").GetComponent<PlayerStatTracking>();
 
         StartCoroutine(RegenHealthOverTime());
     }
 
     private void Update()
     {
+        if (pauseMenuAccess.isPaused) return;
+
         RotatePlayer();
         StoreInput();
         HandleSprint();
@@ -51,6 +59,8 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (pauseMenuAccess.isPaused) return;
+
         PlayerMovement();
     }
 
@@ -139,11 +149,13 @@ public class PlayerController : MonoBehaviour
 
             // Turn on game over screen.
             gameOverUI.SetActive(true);
+            zombiesKilledText.text = "Zombies Killed: " + playerStats.currentZombiesKilled.ToString();
 
             // Play Death Animation.
             playerAnimation.SetBool("PlayerDead", true);
 
             // Disable all player animations.
+            playerStats.ResetZombiesKilled();
             GetComponent<PlayerController>().enabled = false;
             GetComponent<CapsuleCollider>().enabled = false;
             GetComponentInChildren<AssaultRifle>().enabled = false;

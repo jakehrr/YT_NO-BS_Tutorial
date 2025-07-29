@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 
-public class MainMenu : MonoBehaviour
+public class PauseMenu : MonoBehaviour
 {
     [Header("Volume Settings")]
     [SerializeField] private Slider volumeSlider;
@@ -18,44 +18,79 @@ public class MainMenu : MonoBehaviour
     private Resolution[] availableResolutions;
 
     [Header("Navigation")]
-    [SerializeField] private GameObject mainMenu;
+    [SerializeField] private GameObject pauseMenu;
     [SerializeField] private GameObject optionsMenu;
+    [SerializeField] private GameObject menuBackground;
 
-    [Header("Stats")]
-    private PlayerStatTracking playerStats;
-    [SerializeField] private TextMeshProUGUI allTimeKillsText;
+    public bool isPaused;
+
+    private bool optionsOpen;
 
     private void Start()
     {
-        playerStats = GameObject.Find("Player Stat Track").GetComponent<PlayerStatTracking>();
-        allTimeKillsText.text = "All Time Kill Count: " + playerStats.allTimeZombiesKilled;
-
         volumeSlider.onValueChanged.AddListener(SetVolume);
         ResolutionHandler();
     }
 
-    public void StartGame()
+    private void Update()
     {
-        SceneManager.LoadScene(1);
+        HandlePauseInput();
     }
 
+    private void HandlePauseInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            isPaused = !isPaused;
+        }
+
+        if (isPaused)
+        {
+            PauseGame();
+        }
+        else if (!isPaused)
+        {
+            ResumeGame();
+        }
+    }
+
+    public void PauseGame()
+    {
+        Time.timeScale = 0;
+        isPaused = true;
+        menuBackground.SetActive(true);
+
+        if (!optionsOpen)
+        {
+            pauseMenu.SetActive(true);
+            optionsMenu.SetActive(false);
+        }
+        else
+        {
+            pauseMenu.SetActive(false);
+            optionsMenu.SetActive(true);
+        }
+    }
+
+    public void ResumeGame()
+    {
+        Time.timeScale = 1;
+        pauseMenu.SetActive(false);
+        optionsMenu.SetActive(false);
+        menuBackground.SetActive(false);
+        isPaused = false;
+    }
+
+    #region Options Menu Methods
+    
     public void DisplayOptions()
     {
-        // Deactivate main menu UI and active an options page
-        optionsMenu.SetActive(true);
-        mainMenu.SetActive(false);
+        optionsOpen = true;
     }
 
-    public void DisplayMainMenu()
+    public void HideOptions()
     {
-        optionsMenu.SetActive(false);
-        mainMenu.SetActive(true);
-    }
-
-    public void QuitGame()
-    {
-        Application.Quit();
-        Debug.Log("Player has quit the game");
+        optionsOpen = false;
     }
 
     public void SetVolume(float volume)
@@ -63,7 +98,7 @@ public class MainMenu : MonoBehaviour
         float dB;
 
         if (volume <= 0f)
-            dB = -80f; 
+            dB = -80f;
         else
             dB = Mathf.Log10(volume) * 20f;
 
@@ -105,4 +140,6 @@ public class MainMenu : MonoBehaviour
         Resolution selected = availableResolutions[index];
         Screen.SetResolution(selected.width, selected.height, Screen.fullScreen); // keep full screen mode
     }
+
+    #endregion
 }
