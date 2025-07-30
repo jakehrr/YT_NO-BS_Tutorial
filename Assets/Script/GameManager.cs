@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     [Header("Room Control Variables")]
     public bool roomComplete = false;
     [SerializeField] private Animator fadeAnimation;
+    [SerializeField] private NavMeshSurface navMesh;
 
     [Header("Current Wave Stats")]
     public int roomIndex;
@@ -85,6 +86,8 @@ public class GameManager : MonoBehaviour
         // Fade back into the scene
         fadeAnimation.SetBool("FadeOut", false);
         fadeAnimation.SetBool("FadeIn", true);
+
+        navMesh.BuildNavMesh();
     }
 
     public void FadeOutScene() 
