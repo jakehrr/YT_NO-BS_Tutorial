@@ -14,6 +14,12 @@ public class PlayerStatTracking : MonoBehaviour
 
     private void Awake()
     {
+        StatTrackInitialization();
+    }
+
+    // Initial Setup Method (To be called on awake).
+    private void StatTrackInitialization()
+    {
         if (instance != null)
             Destroy(gameObject);
         else
@@ -24,7 +30,10 @@ public class PlayerStatTracking : MonoBehaviour
         GetAllTimeZombiesKilled(allTimeKillsString);
     }
 
+    // Player Stat Display.
 
+
+    #region Methods Handling Kill Counts
 
     public void IncrementCurrentZombiesKilled()
     {
@@ -50,4 +59,6 @@ public class PlayerStatTracking : MonoBehaviour
     {
         currentZombiesKilled = 0;
     }
+
+    #endregion
 }
