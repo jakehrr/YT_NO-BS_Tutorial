@@ -28,10 +28,12 @@ public class AssaultRifle : MonoBehaviour
     [SerializeField] private float bulletSpeed = 100f;
 
     private PauseMenu pauseMenuAccess;
+    private PlayerController playerScript;
 
     private void Start()
     {
         pauseMenuAccess = GameObject.Find("PauseMenu").GetComponent<PauseMenu>();
+        playerScript = GetComponentInParent<PlayerController>();
 
         currentAmmo = magazineSize;
     }
@@ -65,6 +67,8 @@ public class AssaultRifle : MonoBehaviour
 
     private void Shoot()
     {
+
+
         currentAmmo--;
 
         if(muzzleFlash != null) muzzleFlash.Play();

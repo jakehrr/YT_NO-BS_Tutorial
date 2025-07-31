@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerStatTracking : MonoBehaviour
 {
@@ -29,9 +30,6 @@ public class PlayerStatTracking : MonoBehaviour
 
         GetAllTimeZombiesKilled(allTimeKillsString);
     }
-
-    // Player Stat Display.
-
 
     #region Methods Handling Kill Counts
 

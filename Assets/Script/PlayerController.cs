@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -11,6 +12,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float regenTime = 2.5f;
     [SerializeField] private int maxHealth = 5; 
     [SerializeField] private int health = 5;
+    [SerializeField] private float currentSpeed;
+    [SerializeField] private float speedBlendRate; 
+
+    [Header("Animation Variables")]
+    [SerializeField] private float animationBlendSpeed = 0.5f;
+    [SerializeField] private float smoothedHorizontal;
+    [SerializeField] private float smoothedVertical;
 
     [Header("Sprint Stats")]
     [SerializeField] private float sprintSpeed = 6f;
@@ -26,7 +34,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private GameObject playerVisuals;
     [SerializeField] private Animator playerAnimation;
+
+    [Header("UI")]
     [SerializeField] private GameObject gameOverUI;
+    [SerializeField] private Slider healthSlider;
+    [SerializeField] private Slider staminaSlider;
+
+    [Header("FX And Sounds")]
     [SerializeField] private AudioSource playerSounds;
     [SerializeField] private AudioClip deathSFX;
     [SerializeField] private ParticleSystem bloodVFX;
@@ -36,6 +50,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody rb;
     private Vector3 currentInput;
     private bool isSprinting = false;
+    private bool isDead;
     private PauseMenu pauseMenuAccess;
     private PlayerStatTracking playerStats;
 
@@ -53,8 +68,9 @@ public class PlayerController : MonoBehaviour
         if (pauseMenuAccess.isPaused) return;
 
         RotatePlayer();
-        StoreInput();
+        InputAndAnimation();
         HandleSprint();
+        DisplayStatsInUI();
     }
 
     private void FixedUpdate()
@@ -64,6 +80,7 @@ public class PlayerController : MonoBehaviour
         PlayerMovement();
     }
 
+    #region Core Player Functionality.
     // Rotate the player.
     private void RotatePlayer()
     {
@@ -85,20 +102,22 @@ public class PlayerController : MonoBehaviour
     // Move the player.
     private void PlayerMovement()
     {
+        // Calculate direction and set speed. 
+        //
         Vector3 moveDirection = (playerVisuals.transform.forward * currentInput.z + playerVisuals.transform.right * currentInput.x).normalized;
+        float targetSpeed = (currentInput == Vector3.zero) ? 0f : (isSprinting ? sprintSpeed : moveSpeed);
 
-        float currentSpeed = isSprinting ? sprintSpeed : moveSpeed;
+        // Smooth players speed and add that velocity. 
+        //
+        currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, Time.deltaTime * speedBlendRate);
         rb.velocity = moveDirection * currentSpeed;
-
-        if (currentInput == Vector3.zero)
-        {
-            rb.velocity = Vector3.zero;
-        }
     }
 
     // Player Sprint. 
     private void HandleSprint()
     {
+        // Check if sprinting, change player speed & handle stamina 
+        //
         if (Input.GetKey(KeyCode.LeftShift) && stamina > 0f)
         {
             isSprinting = true;
@@ -124,15 +143,28 @@ public class PlayerController : MonoBehaviour
     }
 
     // Get input from the player.
-    private void StoreInput()
+    private void InputAndAnimation()
     {
+        // Get player input and store a current input. 
+        //
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
         currentInput = new Vector3(horizontal, 0f, vertical);
 
-        playerAnimation.SetFloat("HorizontalInput", horizontal);
-        playerAnimation.SetFloat("VerticalInput", vertical);
+        // Smoothly interpolate values for animation
+        //
+        smoothedHorizontal = Mathf.Lerp(smoothedHorizontal, horizontal, Time.deltaTime * animationBlendSpeed);
+        smoothedVertical = Mathf.Lerp(smoothedVertical, vertical, Time.deltaTime * animationBlendSpeed);
+
+        // Pass smoothed values to the Animator
+        //
+        playerAnimation.SetFloat("HorizontalInput", smoothedHorizontal);
+        playerAnimation.SetFloat("VerticalInput", smoothedVertical);
     }
+
+    #endregion
+
+    #region Player Statistic Handlers
 
     // Player takes damage.
     public void PlayerTakeDamage()
@@ -144,6 +176,10 @@ public class PlayerController : MonoBehaviour
 
         if (health <= 0)
         {
+            isDead = true;
+
+            healthSlider.value = 0;
+
             // Play death sound on player death. 
             playerSounds.PlayOneShot(deathSFX);
 
@@ -166,6 +202,8 @@ public class PlayerController : MonoBehaviour
     // Heal player over time.
     private IEnumerator RegenHealthOverTime()
     {
+        if (isDead) yield return null;
+
         yield return new WaitForSeconds(regenTime);
 
         if (health >= maxHealth)
@@ -175,4 +213,16 @@ public class PlayerController : MonoBehaviour
 
         StartCoroutine(RegenHealthOverTime());  
     }
+
+    // Parse player stats to player stats script.
+    private void DisplayStatsInUI()
+    {
+        float targetHealth = Mathf.InverseLerp(0, maxHealth, health);
+        healthSlider.value = Mathf.Lerp(healthSlider.value, targetHealth, Time.deltaTime * 10f);
+
+        float targetStamina = Mathf.InverseLerp(0, maxStamina, stamina);
+        staminaSlider.value = Mathf.Lerp(staminaSlider.value, targetStamina, Time.deltaTime * 10f);
+    }
+
+    #endregion
 }

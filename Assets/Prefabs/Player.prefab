@@ -4618,11 +4618,13 @@ MonoBehaviour:
   regenTime: 5
   maxHealth: 5
   health: 5
-  sprintSpeed: 6
+  horizontalAnimationBlendSpeed: 0.2
+  verticalAnimationBlendSpeed: 0.2
+  sprintSpeed: 4.5
   stamina: 100
   maxStamina: 100
-  staminaDrainRate: 25
-  staminaRegenRate: 15
+  staminaDrainRate: 35
+  staminaRegenRate: 20
   regenCooldownTimer: 0
   staminaRegenDelay: 1
   mainCamera: {fileID: 5918836426502801090}
@@ -4634,7 +4636,8 @@ MonoBehaviour:
   gameOverUI: {fileID: 0}
   playerSounds: {fileID: 4758904556244681238}
   deathSFX: {fileID: 8300000, guid: 68a56cd1795e7df4284e79012ec4731b, type: 3}
-  bloodVFX: {fileID: 0}
+  bloodVFX: {fileID: 4875377667864102700}
+  zombiesKilledText: {fileID: 0}
 --- !u!136 &4613476780979995031
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -4694,7 +4697,8 @@ AudioSource:
   m_GameObject: {fileID: 9000982439408364953}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 24300002, guid: 5fadf37b618b0604fb39c76fe941dd36,
+    type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -5032,7 +5036,7 @@ AudioSource:
     type: 2}
   m_audioClip: {fileID: 8300000, guid: 87dcc79c3dec9214c810a33cd3b6bf4d, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.3
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -5267,6 +5271,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 19808544, guid: 78e1c8c5b281b8b439229473779ac9aa, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 19951176, guid: 78e1c8c5b281b8b439229473779ac9aa, type: 3}
       propertyPath: m_Materials.Array.size
       value: 1
@@ -5276,6 +5284,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 78e1c8c5b281b8b439229473779ac9aa, type: 3}
+--- !u!198 &4875377667864102700 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 19808544, guid: 78e1c8c5b281b8b439229473779ac9aa,
+    type: 3}
+  m_PrefabInstance: {fileID: 4875377667878667788}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4875377667878181802 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 499110, guid: 78e1c8c5b281b8b439229473779ac9aa,
