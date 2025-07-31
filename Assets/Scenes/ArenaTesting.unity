@@ -28268,7 +28268,7 @@ MonoBehaviour:
   navMesh: {fileID: 1508931123}
   roomIndex: 0
   currentZombieCount: 0
-  maxZombieCount: 1
+  maxZombieCount: 10
   currentZombiesAlive: 0
   indicatorArrows: {fileID: 227604911}
   rooms:
